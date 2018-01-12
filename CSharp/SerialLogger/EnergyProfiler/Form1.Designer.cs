@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.FlukeChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.SerialRXBox = new System.Windows.Forms.RichTextBox();
             this.SendTextBox = new System.Windows.Forms.TextBox();
@@ -43,8 +43,8 @@
             this.FlukeBaudBox = new System.Windows.Forms.TextBox();
             this.FileBox = new System.Windows.Forms.TextBox();
             this.FileButton = new System.Windows.Forms.Button();
-            this.AppendCheck = new System.Windows.Forms.CheckBox();
-            this.AutoFileCheck = new System.Windows.Forms.CheckBox();
+            this.ChartEnableCheck = new System.Windows.Forms.CheckBox();
+            this.SerialRXEnableCheck = new System.Windows.Forms.CheckBox();
             this.TimestampCheck = new System.Windows.Forms.CheckBox();
             this.TagPortLabel = new System.Windows.Forms.Label();
             this.FlukePortLabel = new System.Windows.Forms.Label();
@@ -53,33 +53,35 @@
             this.CRCheck = new System.Windows.Forms.CheckBox();
             this.LFCheck = new System.Windows.Forms.CheckBox();
             this.AppendCRLFLabel = new System.Windows.Forms.Label();
+            this.LogEnableCheck = new System.Windows.Forms.CheckBox();
+            this.ClearLogButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.FlukeChart)).BeginInit();
             this.SuspendLayout();
             // 
             // FlukeChart
             // 
-            chartArea1.CursorX.IsUserEnabled = true;
-            chartArea1.CursorX.IsUserSelectionEnabled = true;
-            chartArea1.Name = "ChartArea1";
-            this.FlukeChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.FlukeChart.Legends.Add(legend1);
+            chartArea3.CursorX.IsUserEnabled = true;
+            chartArea3.CursorX.IsUserSelectionEnabled = true;
+            chartArea3.Name = "ChartArea1";
+            this.FlukeChart.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.FlukeChart.Legends.Add(legend3);
             this.FlukeChart.Location = new System.Drawing.Point(13, 13);
             this.FlukeChart.Name = "FlukeChart";
             this.FlukeChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            series1.Legend = "Legend1";
-            series1.Name = "Power";
-            series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series2.Color = System.Drawing.Color.Red;
-            series2.Legend = "Legend1";
-            series2.Name = "Current";
-            this.FlukeChart.Series.Add(series1);
-            this.FlukeChart.Series.Add(series2);
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series5.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            series5.Legend = "Legend1";
+            series5.Name = "State";
+            series5.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series6.Color = System.Drawing.Color.Red;
+            series6.Legend = "Legend1";
+            series6.Name = "Current";
+            this.FlukeChart.Series.Add(series5);
+            this.FlukeChart.Series.Add(series6);
             this.FlukeChart.Size = new System.Drawing.Size(824, 300);
             this.FlukeChart.TabIndex = 0;
             // 
@@ -112,7 +114,7 @@
             // TagPortBox
             // 
             this.TagPortBox.FormattingEnabled = true;
-            this.TagPortBox.Location = new System.Drawing.Point(618, 436);
+            this.TagPortBox.Location = new System.Drawing.Point(618, 464);
             this.TagPortBox.Name = "TagPortBox";
             this.TagPortBox.Size = new System.Drawing.Size(89, 21);
             this.TagPortBox.TabIndex = 4;
@@ -120,7 +122,7 @@
             // FlukePortBox
             // 
             this.FlukePortBox.FormattingEnabled = true;
-            this.FlukePortBox.Location = new System.Drawing.Point(748, 436);
+            this.FlukePortBox.Location = new System.Drawing.Point(748, 464);
             this.FlukePortBox.Name = "FlukePortBox";
             this.FlukePortBox.Size = new System.Drawing.Size(89, 21);
             this.FlukePortBox.TabIndex = 5;
@@ -137,7 +139,7 @@
             // 
             // TagBaudBox
             // 
-            this.TagBaudBox.Location = new System.Drawing.Point(618, 489);
+            this.TagBaudBox.Location = new System.Drawing.Point(618, 517);
             this.TagBaudBox.Name = "TagBaudBox";
             this.TagBaudBox.Size = new System.Drawing.Size(89, 20);
             this.TagBaudBox.TabIndex = 7;
@@ -145,7 +147,7 @@
             // 
             // FlukeBaudBox
             // 
-            this.FlukeBaudBox.Location = new System.Drawing.Point(748, 489);
+            this.FlukeBaudBox.Location = new System.Drawing.Point(748, 517);
             this.FlukeBaudBox.Name = "FlukeBaudBox";
             this.FlukeBaudBox.Size = new System.Drawing.Size(89, 20);
             this.FlukeBaudBox.TabIndex = 7;
@@ -157,6 +159,7 @@
             this.FileBox.Name = "FileBox";
             this.FileBox.Size = new System.Drawing.Size(138, 20);
             this.FileBox.TabIndex = 7;
+            this.FileBox.Text = "C:\\Users\\dpham\\Box Sync\\Duy Pham\\Logs";
             // 
             // FileButton
             // 
@@ -168,33 +171,35 @@
             this.FileButton.UseVisualStyleBackColor = true;
             this.FileButton.Click += new System.EventHandler(this.FileButton_Click);
             // 
-            // AppendCheck
+            // ChartEnableCheck
             // 
-            this.AppendCheck.AutoSize = true;
-            this.AppendCheck.ForeColor = System.Drawing.SystemColors.Control;
-            this.AppendCheck.Location = new System.Drawing.Point(618, 379);
-            this.AppendCheck.Name = "AppendCheck";
-            this.AppendCheck.Size = new System.Drawing.Size(63, 17);
-            this.AppendCheck.TabIndex = 8;
-            this.AppendCheck.Text = "Append";
-            this.AppendCheck.UseVisualStyleBackColor = true;
+            this.ChartEnableCheck.AutoSize = true;
+            this.ChartEnableCheck.ForeColor = System.Drawing.SystemColors.Control;
+            this.ChartEnableCheck.Location = new System.Drawing.Point(618, 421);
+            this.ChartEnableCheck.Name = "ChartEnableCheck";
+            this.ChartEnableCheck.Size = new System.Drawing.Size(87, 17);
+            this.ChartEnableCheck.TabIndex = 8;
+            this.ChartEnableCheck.Text = "Enable Chart";
+            this.ChartEnableCheck.UseVisualStyleBackColor = true;
             // 
-            // AutoFileCheck
+            // SerialRXEnableCheck
             // 
-            this.AutoFileCheck.AutoSize = true;
-            this.AutoFileCheck.ForeColor = System.Drawing.SystemColors.Control;
-            this.AutoFileCheck.Location = new System.Drawing.Point(618, 356);
-            this.AutoFileCheck.Name = "AutoFileCheck";
-            this.AutoFileCheck.Size = new System.Drawing.Size(67, 17);
-            this.AutoFileCheck.TabIndex = 8;
-            this.AutoFileCheck.Text = "Auto File";
-            this.AutoFileCheck.UseVisualStyleBackColor = true;
+            this.SerialRXEnableCheck.AutoSize = true;
+            this.SerialRXEnableCheck.ForeColor = System.Drawing.SystemColors.Control;
+            this.SerialRXEnableCheck.Location = new System.Drawing.Point(618, 398);
+            this.SerialRXEnableCheck.Name = "SerialRXEnableCheck";
+            this.SerialRXEnableCheck.Size = new System.Drawing.Size(106, 17);
+            this.SerialRXEnableCheck.TabIndex = 8;
+            this.SerialRXEnableCheck.Text = "Enable Serial RX";
+            this.SerialRXEnableCheck.UseVisualStyleBackColor = true;
             // 
             // TimestampCheck
             // 
             this.TimestampCheck.AutoSize = true;
+            this.TimestampCheck.Checked = true;
+            this.TimestampCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.TimestampCheck.ForeColor = System.Drawing.SystemColors.Control;
-            this.TimestampCheck.Location = new System.Drawing.Point(748, 379);
+            this.TimestampCheck.Location = new System.Drawing.Point(748, 421);
             this.TimestampCheck.Name = "TimestampCheck";
             this.TimestampCheck.Size = new System.Drawing.Size(77, 17);
             this.TimestampCheck.TabIndex = 8;
@@ -205,7 +210,7 @@
             // 
             this.TagPortLabel.AutoSize = true;
             this.TagPortLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.TagPortLabel.Location = new System.Drawing.Point(615, 420);
+            this.TagPortLabel.Location = new System.Drawing.Point(615, 448);
             this.TagPortLabel.Name = "TagPortLabel";
             this.TagPortLabel.Size = new System.Drawing.Size(26, 13);
             this.TagPortLabel.TabIndex = 9;
@@ -215,7 +220,7 @@
             // 
             this.FlukePortLabel.AutoSize = true;
             this.FlukePortLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.FlukePortLabel.Location = new System.Drawing.Point(745, 420);
+            this.FlukePortLabel.Location = new System.Drawing.Point(745, 448);
             this.FlukePortLabel.Name = "FlukePortLabel";
             this.FlukePortLabel.Size = new System.Drawing.Size(33, 13);
             this.FlukePortLabel.TabIndex = 9;
@@ -225,7 +230,7 @@
             // 
             this.Baud1Label.AutoSize = true;
             this.Baud1Label.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.Baud1Label.Location = new System.Drawing.Point(615, 473);
+            this.Baud1Label.Location = new System.Drawing.Point(615, 501);
             this.Baud1Label.Name = "Baud1Label";
             this.Baud1Label.Size = new System.Drawing.Size(32, 13);
             this.Baud1Label.TabIndex = 9;
@@ -235,7 +240,7 @@
             // 
             this.Baud2Label.AutoSize = true;
             this.Baud2Label.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.Baud2Label.Location = new System.Drawing.Point(745, 473);
+            this.Baud2Label.Location = new System.Drawing.Point(745, 501);
             this.Baud2Label.Name = "Baud2Label";
             this.Baud2Label.Size = new System.Drawing.Size(32, 13);
             this.Baud2Label.TabIndex = 9;
@@ -273,6 +278,29 @@
             this.AppendCRLFLabel.TabIndex = 9;
             this.AppendCRLFLabel.Text = "Append: ";
             // 
+            // LogEnableCheck
+            // 
+            this.LogEnableCheck.AutoSize = true;
+            this.LogEnableCheck.Checked = true;
+            this.LogEnableCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.LogEnableCheck.ForeColor = System.Drawing.SystemColors.Control;
+            this.LogEnableCheck.Location = new System.Drawing.Point(748, 397);
+            this.LogEnableCheck.Name = "LogEnableCheck";
+            this.LogEnableCheck.Size = new System.Drawing.Size(80, 17);
+            this.LogEnableCheck.TabIndex = 8;
+            this.LogEnableCheck.Text = "Enable Log";
+            this.LogEnableCheck.UseVisualStyleBackColor = true;
+            // 
+            // ClearLogButton
+            // 
+            this.ClearLogButton.Location = new System.Drawing.Point(618, 356);
+            this.ClearLogButton.Name = "ClearLogButton";
+            this.ClearLogButton.Size = new System.Drawing.Size(138, 26);
+            this.ClearLogButton.TabIndex = 6;
+            this.ClearLogButton.Text = "Clear Log File";
+            this.ClearLogButton.UseVisualStyleBackColor = true;
+            this.ClearLogButton.Click += new System.EventHandler(this.ClearLogButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -287,11 +315,13 @@
             this.Controls.Add(this.TimestampCheck);
             this.Controls.Add(this.LFCheck);
             this.Controls.Add(this.CRCheck);
-            this.Controls.Add(this.AutoFileCheck);
-            this.Controls.Add(this.AppendCheck);
+            this.Controls.Add(this.SerialRXEnableCheck);
+            this.Controls.Add(this.LogEnableCheck);
+            this.Controls.Add(this.ChartEnableCheck);
             this.Controls.Add(this.FileBox);
             this.Controls.Add(this.FlukeBaudBox);
             this.Controls.Add(this.TagBaudBox);
+            this.Controls.Add(this.ClearLogButton);
             this.Controls.Add(this.FileButton);
             this.Controls.Add(this.StartButton);
             this.Controls.Add(this.FlukePortBox);
@@ -301,7 +331,7 @@
             this.Controls.Add(this.SerialRXBox);
             this.Controls.Add(this.FlukeChart);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Energy Profiler";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.FlukeChart)).EndInit();
             this.ResumeLayout(false);
@@ -322,8 +352,8 @@
         private System.Windows.Forms.TextBox FlukeBaudBox;
         private System.Windows.Forms.TextBox FileBox;
         private System.Windows.Forms.Button FileButton;
-        private System.Windows.Forms.CheckBox AppendCheck;
-        private System.Windows.Forms.CheckBox AutoFileCheck;
+        private System.Windows.Forms.CheckBox ChartEnableCheck;
+        private System.Windows.Forms.CheckBox SerialRXEnableCheck;
         private System.Windows.Forms.CheckBox TimestampCheck;
         private System.Windows.Forms.Label TagPortLabel;
         private System.Windows.Forms.Label FlukePortLabel;
@@ -332,6 +362,8 @@
         private System.Windows.Forms.CheckBox CRCheck;
         private System.Windows.Forms.CheckBox LFCheck;
         private System.Windows.Forms.Label AppendCRLFLabel;
+        private System.Windows.Forms.CheckBox LogEnableCheck;
+        private System.Windows.Forms.Button ClearLogButton;
     }
 }
 

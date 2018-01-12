@@ -12,16 +12,20 @@ using rtChart;
 using System.IO;
 using System.IO.Ports;
 using System.Threading;
+using System.Diagnostics;
 
 namespace EnergyProfiler
 {
     public partial class Form1 : Form
     {
+        const int measInterval = 100;
+
         kayChart chartData;
         SerialPort tagPort, flukePort;
         System.Threading.Timer flukeTimer;
         double flukeData = 0;
-        StreamWriter tagStream;
+        StreamWriter tagStream, flukeStream;
+        Stopwatch stopWatch;
 
         public Form1()
         {
@@ -30,9 +34,6 @@ namespace EnergyProfiler
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            chartData = new kayChart(FlukeChart, 2400);
-            chartData.serieName = "Current";
-
             string[] portNames = SerialPort.GetPortNames();
             foreach (string portName in portNames)
             {
@@ -40,41 +41,98 @@ namespace EnergyProfiler
                 FlukePortBox.Items.Add(portName);
             }
 
-            flukeTimer = new System.Threading.Timer(FlukeTimerCallBack, null, Timeout.Infinite, 100);
-
+            flukeTimer = new System.Threading.Timer(FlukeTimerCallBack, null, Timeout.Infinite, measInterval);
+            stopWatch = new Stopwatch();
         }
 
         private void StartButton_Click(object sender, EventArgs e)
         {
             if (StartButton.Text == "Start")
             {
-                tagPort = new SerialPort(TagPortBox.SelectedItem.ToString(), int.Parse(TagBaudBox.Text));
-                tagPort.DataReceived += new SerialDataReceivedEventHandler(TagPortDataReceivedEventHandler);
-                tagPort.Open();
+                stopWatch.Restart();
+                int tagBaud, flukeBaud;
 
-                flukePort = new SerialPort(FlukePortBox.SelectedItem.ToString(), int.Parse(TagBaudBox.Text));
-                flukePort.DataReceived += new SerialDataReceivedEventHandler(FlukePortDataReceivedEventHandler);
-                flukePort.Open();
+                if ((TagPortBox.SelectedItem != null) && (int.TryParse(TagBaudBox.Text, out tagBaud)) )
+                {
+                    tagPort = new SerialPort(TagPortBox.SelectedItem.ToString(), tagBaud);
+                    tagPort.DataReceived += new SerialDataReceivedEventHandler(TagPortDataReceivedEventHandler);
+                    tagPort.Open();
+                }
 
-                flukeTimer.Change(0, 100);
+                if ( (FlukePortBox.SelectedItem != null) && (int.TryParse(FlukeBaudBox.Text, out flukeBaud)) )
+                {
+                    flukePort = new SerialPort(FlukePortBox.SelectedItem.ToString(), flukeBaud);
+                    flukePort.DataReceived += new SerialDataReceivedEventHandler(FlukePortDataReceivedEventHandler);
+                    flukePort.Open();
 
-                string path = FileBox.Text;
-                tagStream = File.AppendText(path);
-                tagStream.WriteLine("\r\n\r\n++++++++++++++++++++++++++++++++++++++\r\n" +
-                    "Start Time: {0}\r\n++++++++++++++++++++++++++++++++++++++\r\n", DateTime.Now.ToString());
-                tagStream.Flush();
-                
+                }
+
+                //flukePort = new SerialPort(FlukePortBox.SelectedItem.ToString(), int.Parse(TagBaudBox.Text));
+                //flukePort.DataReceived += new SerialDataReceivedEventHandler(FlukePortDataReceivedEventHandler);
+                //flukePort.Open();
+
+                if (ChartEnableCheck.Checked)
+                {
+                    chartData = new kayChart(FlukeChart, 600);
+                    chartData.serieName = "Current";
+                }
+
+                flukeTimer.Change(0, measInterval);
+
+                if (LogEnableCheck.Checked)
+                {
+                    string path = FileBox.Text;
+                    tagStream = File.AppendText(path + ".log");
+                    tagStream.WriteLine("\r\n\r\n++++++++++++++++++++++++++++++++++++++\r\n" +
+                        "Start Time: {0}\r\n++++++++++++++++++++++++++++++++++++++\r\n", DateTime.Now.ToString());
+
+                    flukeStream = File.AppendText(path + ".csv");
+                    flukeStream.WriteLine("\r\n\r\n++++++++++++++++++++++++++++++++++++++\r\n" +
+                        "Start Time: {0}\r\n++++++++++++++++++++++++++++++++++++++\r\n", DateTime.Now.ToString());
+
+                    // use rx box as to add notes
+                    if ((SerialRXBox.TextLength > 0) && (!SerialRXEnableCheck.Checked))
+                    {
+                        tagStream.WriteLine(SerialRXBox.Text);
+                        flukeStream.WriteLine(SerialRXBox.Text);
+                    }
+
+                    tagStream.Flush();
+                    flukeStream.Flush();
+                }
+
+                //flukePort.WriteLine("VAL1?");
 
                 StartButton.Text = "Stop";
             }
 
             else
             {
-                tagPort.Close();
-                flukePort.Close();
-                tagStream.Close();
+                if (tagPort != null)
+                {
+                    tagPort.Close();
+                }
+                
+                if (flukePort != null)
+                {
+                    flukePort.Close();
+                }
 
-                flukeTimer.Change(Timeout.Infinite, 100);
+                // refresh COM port list
+                string[] portNames = SerialPort.GetPortNames();
+                TagPortBox.Items.Clear();
+                FlukePortBox.Items.Clear();
+
+                foreach (string portName in portNames)
+                {
+                    TagPortBox.Items.Add(portName);
+                    FlukePortBox.Items.Add(portName);
+                }
+
+                tagStream.Close();
+                flukeStream.Close();
+
+                flukeTimer.Change(Timeout.Infinite, measInterval);
 
                 StartButton.Text = "Start";
             }
@@ -84,10 +142,23 @@ namespace EnergyProfiler
         // send cmd to get current value
         private void FlukeTimerCallBack(object state)
         {
-            // update last value, get next value
-            chartData.TriggeredUpdate(flukeData);
+            //// update last value, get next value
+            if (ChartEnableCheck.Checked)
+            {
+                chartData.TriggeredUpdate(flukeData);
+            }
 
-            if (flukePort.IsOpen)
+            
+
+            //if (TimestampCheck.Checked)
+            //{
+            //    flukeStream.Write("[{0}] ", DateTime.Now.ToString("hh:mm:ss.fff"));
+            //}
+
+            //flukeStream.WriteLine(flukeData);
+            //flukeStream.Flush();
+
+            if ( (flukePort != null) && (flukePort.IsOpen) )
             {
                 // send cmd to get measurement from Fluke multimeter. Need setup first (DCI, Fluke 45)
                 flukePort.WriteLine("VAL1?");
@@ -96,54 +167,108 @@ namespace EnergyProfiler
 
         private void TagPortDataReceivedEventHandler(object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort sData = sender as SerialPort;
-            string recvData = sData.ReadLine();
-            SerialRXBox.Invoke((MethodInvoker)delegate { SerialRXBox.AppendText(recvData); });
-            tagStream.WriteLine("[{0}] {1}", DateTime.Now.ToString("hh:mm:ss.fff"), recvData);
-            tagStream.Flush();
+            if ( (tagPort != null) && (tagPort.IsOpen) )
+            {
+                string recvData = "";
+
+                SerialPort sData = sender as SerialPort;
+                try
+                {
+                    recvData = sData.ReadLine();
+                } catch (IOException) { return; }
+                
+                if (SerialRXEnableCheck.Checked)
+                {
+                    SerialRXBox.Invoke((MethodInvoker)delegate { SerialRXBox.AppendText(recvData); });
+                }
+
+                if ( (TimestampCheck.Checked) )
+                {
+                    //tagStream.Write("[{0}] ", DateTime.Now.ToString("hh:mm:ss.fff"));
+                    tagStream.Write("[ {0} ] ", ((double)(stopWatch.ElapsedMilliseconds)) / 1000);
+                }
+
+                tagStream.Write(recvData + "\n");
+                tagStream.Flush();
+            }
         }
 
         // save last read
         private void FlukePortDataReceivedEventHandler (object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort sData = sender as SerialPort;
-            string recvData = sData.ReadLine();
-            double data;
-
-            if (Double.TryParse(recvData, out data))
+            if ((flukePort != null) && (flukePort.IsOpen))
             {
-                flukeData = data;
+                SerialPort sData = sender as SerialPort;
+                string recvData = "";
 
-                // false read
-                if (flukeData > 2)
+                try
                 {
-                    flukeData = -1;
+                    recvData = sData.ReadLine();
                 }
+                catch (IOException) { return; }
 
-                else if (flukeData < 0)
+                double data;
+
+                if (Double.TryParse(recvData, out data))
                 {
-                    flukeData = 0;
-                }
+                    flukeData = data;
 
-                //chartData.TriggeredUpdate(flukeData);
+                    // false read
+                    if (flukeData > 2)
+                    {
+                        flukeData = -1;
+                    }
+
+                    else if (flukeData < 0)
+                    {
+                        flukeData = 0;
+                    }
+
+                    if (TimestampCheck.Checked)
+                    {
+                        flukeStream.Write("[ {0} ] ", ((double)(stopWatch.ElapsedMilliseconds)) / 1000);
+                    }
+
+                    flukeStream.WriteLine(flukeData);
+                    flukeStream.Flush();
+
+                    //chartData.TriggeredUpdate(flukeData);
+
+                    // send cmd to get measurement from Fluke multimeter. Need setup first (DCI, Fluke 45)
+                    //flukePort.WriteLine("VAL1?");
+
+                    //chartData.TriggeredUpdate(flukeData);
+                }
             }
+            
         }
 
         private void SendButton_Click(object sender, EventArgs e)
         {
-            tagPort.Write(SendTextBox.Text);
+            if (tagPort.IsOpen)
+            {
+                tagPort.Write(SendTextBox.Text);
 
-            if (CRCheck.Checked)
-                tagPort.Write("\r");
+                if (CRCheck.Checked)
+                    tagPort.Write("\r");
 
-            if (LFCheck.Checked)
-                tagPort.Write("\n");
+                if (LFCheck.Checked)
+                    tagPort.Write("\n");
+            }
+        }
+
+        private void ClearLogButton_Click(object sender, EventArgs e)
+        {
+            string path = FileBox.Text;
+            File.Create(path + ".log").Close();
+            File.Create(path + ".csv").Close();
         }
 
         private void FileButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.RestoreDirectory = true;
+            fileDialog.CheckFileExists = false;
 
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -154,9 +279,11 @@ namespace EnergyProfiler
         // auto-scroll
         private void SerialRXBox_TextChanged(object sender, EventArgs e)
         {
-            SerialRXBox.SelectionStart = SerialRXBox.Text.Length;
-            SerialRXBox.ScrollToCaret();
+            if (SerialRXEnableCheck.Checked)
+            {
+                SerialRXBox.SelectionStart = SerialRXBox.Text.Length;
+                SerialRXBox.ScrollToCaret();
+            }
         }
-
     }
 }
